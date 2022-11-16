@@ -28,7 +28,7 @@ async function run() {
             const bookingQuery = { appointmentDate: date }
             const alreadyBooked = await bookingsCollection.find(bookingQuery).toArray();
 
-            // code carefully :D
+            // remove the booked slots and show the remaining slots for every treatment options
             options.forEach(option => {
                 const optionBooked = alreadyBooked.filter(book => book.treatment === option.name);
                 const bookedSlots = optionBooked.map(book => book.slot);
@@ -40,18 +40,20 @@ async function run() {
         app.post('/bookings', async (req, res) => {
             const booking = req.body;
             console.log(booking);
-            // const query = {
-            //     appointmentDate: booking.appointmentDate,
-            //     email: booking.email,
-            //     treatment: booking.treatment
-            // }
 
-            // const alreadyBooked = await bookingsCollection.find(query).toArray();
+            //restrict user email from booking a specific treatment more than one time in a day
+            const query = {
+                appointmentDate: booking.appointmentDate,
+                email: booking.email,
+                treatment: booking.treatment
+            }
 
-            // if (alreadyBooked.length) {
-            //     const message = `You already have a booking on ${booking.appointmentDate}`
-            //     return res.send({ acknowledged: false, message })
-            // }
+            const alreadyBooked = await bookingsCollection.find(query).toArray();
+
+            if (alreadyBooked.length) {
+                const message = `You already have a booking on ${booking.appointmentDate}`
+                return res.send({ acknowledged: false, message })
+            }
 
             const result = await bookingsCollection.insertOne(booking);
             res.send(result);
