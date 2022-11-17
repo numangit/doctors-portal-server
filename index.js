@@ -61,13 +61,13 @@ async function run() {
         });
 
         //get bookings of a specific user baser on query
-        app.get('/bookings', async (req, res) => {
+        app.get('/bookings', verifyJWT, async (req, res) => {
             const email = req.query.email;
-            // const decodedEmail = req.decoded.email;
+            const decodedEmail = req.decoded.email;
 
-            // if (email !== decodedEmail) {
-            //     return res.status(403).send({ message: 'forbidden access' });
-            // }
+            if (email !== decodedEmail) {
+                return res.status(403).send({ message: 'forbidden access' });
+            }
 
             const query = { email: email };
             const bookings = await bookingsCollection.find(query).toArray();
@@ -109,6 +109,13 @@ async function run() {
                 return res.send({ accessToken: token });
             }
             res.status(403).send({ accessToken: '' })
+        });
+
+        //end point to get all users
+        app.get('/users', async (req, res) => {
+            const query = {};
+            const users = await usersCollection.find(query).toArray();
+            res.send(users);
         });
 
         //post user data to the users collections
