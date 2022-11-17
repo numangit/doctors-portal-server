@@ -83,7 +83,7 @@ async function run() {
             const email = req.query.email;
             const query = { email: email };
 
-            //jwt will only generate token if the user is registered. (since user data will be saved to database we can check from there if user email exist)
+            //jwt will only generate token if the user registered. (since user data will be saved to database while registering hence we can check from there if user email exist)
             const user = await usersCollection.findOne(query);
             if (user) {
                 const token = jwt.sign({ email }, process.env.ACCESS_TOKEN, { expiresIn: '1h' })
