@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { MongoClient, ServerApiVersion } = require('mongodb');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const port = process.env.PORT || 5000;
 
@@ -75,6 +76,20 @@ async function run() {
 
             const result = await bookingsCollection.insertOne(booking);
             res.send(result);
+        });
+
+        //endpoint to generate jwt (client side will send query)
+        app.get('/jwt', async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email };
+
+            //jwt will only generate token if the user is registered. (since user data will be saved to database we can check from there if user email exist)
+            const user = await usersCollection.findOne(query);
+            if (user) {
+                const token = jwt.sign({ email }, process.env.ACCESS_TOKEN, { expiresIn: '1h' })
+                return res.send({ accessToken: token });
+            }
+            res.status(403).send({ accessToken: '' })
         });
 
         //post user data to the users collections
