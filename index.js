@@ -50,7 +50,7 @@ async function run() {
             const bookingQuery = { appointmentDate: date }
             const alreadyBooked = await bookingsCollection.find(bookingQuery).toArray();
 
-            // remove the booked slots and show the remaining slots for every treatment options
+            // remove the booked slots and show the remaining slots for every treatment options on that perticular date
             options.forEach(option => {
                 const optionBooked = alreadyBooked.filter(book => book.treatment === option.name);
                 const bookedSlots = optionBooked.map(book => book.slot);
@@ -117,6 +117,14 @@ async function run() {
             const users = await usersCollection.find(query).toArray();
             res.send(users);
         });
+
+        //api to check if the logged in user is an admin
+        app.get('/users/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email }
+            const user = await usersCollection.findOne(query);
+            res.send({ isAdmin: user?.role === 'admin' });
+        })
 
         //post user data to the users collections
         app.post('/users', async (req, res) => {
