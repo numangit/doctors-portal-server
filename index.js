@@ -123,6 +123,7 @@ async function run() {
             const email = req.params.email;
             const query = { email }
             const user = await usersCollection.findOne(query);
+            //isAdmin will return true if user has admin role and false if not
             res.send({ isAdmin: user?.role === 'admin' });
         })
 
