@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId, ObjectID } = require('mongodb');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const port = process.env.PORT || 5000;
@@ -178,6 +178,14 @@ async function run() {
             const result = await doctorsCollection.insertOne(doctor);
             res.send(result);
         });
+
+        //delete api to delete the doctor data
+        app.delete('/doctors/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const result = await doctorsCollection.deleteOne(filter);
+            res.send(result);
+        })
 
     }
     finally {
