@@ -165,6 +165,13 @@ async function run() {
             res.send(result);
         })
 
+        //api to get all the data from doctors collection
+        app.get('/doctors', verifyJWT, async (req, res) => {
+            const query = {};
+            const doctors = await doctorsCollection.find(query).toArray();
+            res.send(doctors);
+        })
+
         //api to add doctors data
         app.post('/doctors', verifyJWT, async (req, res) => {
             const doctor = req.body;
