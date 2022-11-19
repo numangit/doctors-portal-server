@@ -40,7 +40,7 @@ async function run() {
         const bookingsCollection = client.db('doctorsPortal').collection('bookings');
         const usersCollection = client.db('doctorsPortal').collection('users');
 
-        //get appointment options available 
+        //get appointment options available (use Aggregate to query multiple collection and then merge data)
         app.get('/appointmentOptions', async (req, res) => {
             const date = req.query.date;
             const query = {};
@@ -59,6 +59,13 @@ async function run() {
             })
             res.send(options);
         });
+
+        //get appointment name using .project method 
+        app.get('/appointmentSpecialty', async (req, res) => {
+            const query = {}
+            const result = await appointmentOptionCollection.find(query).project({ name: 1 }).toArray();
+            res.send(result);
+        })
 
         //get bookings of a specific user baser on query
         app.get('/bookings', verifyJWT, async (req, res) => {
@@ -123,7 +130,7 @@ async function run() {
             const email = req.params.email;
             const query = { email }
             const user = await usersCollection.findOne(query);
-            //isAdmin will return true if user has admin role and false if not
+            //isAdmin will return true if user has admin role and false if not 
             res.send({ isAdmin: user?.role === 'admin' });
         })
 
