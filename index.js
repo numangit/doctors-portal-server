@@ -169,6 +169,19 @@ async function run() {
             res.send(result);
         })
 
+        // temporary to update price field on appointment options
+        // app.get('/addPrice', async (req, res) => {
+        //     const filter = {}
+        //     const options = { upsert: true }
+        //     const updatedDoc = {
+        //         $set: {
+        //             price: 99
+        //         }
+        //     }
+        //     const result = await appointmentOptionCollection.updateMany(filter, updatedDoc, options);
+        //     res.send(result);
+        // })
+
         //api to get all the data from doctors collection
         app.get('/doctors', verifyJWT, verifyAdmin, async (req, res) => {
             const query = {};
