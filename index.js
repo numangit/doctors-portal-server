@@ -94,6 +94,14 @@ async function run() {
             res.send(bookings);
         })
 
+        //api get specific booking data by id
+        app.get('/bookings/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const booking = await bookingsCollection.findOne(query);
+            res.send(booking);
+        })
+
         //post selected bookings by the user to the booking collection
         app.post('/bookings', async (req, res) => {
             const booking = req.body;
